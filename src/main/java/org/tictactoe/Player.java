@@ -4,10 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 public abstract class Player {
-    private Field field;
-    private Field.Symbol symbol;
+    protected Field field;
+    protected Field.Symbol symbol;
 
-    private String playerName;
+    protected String playerName;
 
     public Player(String playerName, Field field, Field.Symbol symbol) {
         this.field = field;

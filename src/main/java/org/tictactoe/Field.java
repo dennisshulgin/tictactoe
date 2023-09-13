@@ -1,14 +1,14 @@
 package org.tictactoe;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 
 public final class Field {
 
     private final Symbol[][] field;
     private final int size;
     private final Map<Integer, int[]> coordinates;
+
+    private final Set<Integer> freeCoordinates;
 
     private int freeCellsCount;
 
@@ -17,6 +17,7 @@ public final class Field {
         validateFieldSize(size);
         this.field = new Symbol[size][size];
         this.coordinates = new HashMap<>(size * size);
+        this.freeCoordinates = new HashSet<>(size * size);
         initField();
     }
 
@@ -25,6 +26,7 @@ public final class Field {
             for(int j = 0; j < this.size; j++) {
                 field[i][j] = Symbol.N;
                 coordinates.put(i * size + j + 1, new int[] {i, j});
+                freeCoordinates.add(i * size + j + 1);
             }
         }
         freeCellsCount = this.size * this.size;
@@ -42,8 +44,8 @@ public final class Field {
         if (this.field[x][y] != Symbol.N) {
             throw new IllegalStateException("The current cell is already filled");
         }
-        freeCellsCount--;
-
+        this.freeCellsCount--;
+        this.freeCoordinates.remove(number);
         this.field[x][y] = symbol;
     }
 
@@ -54,12 +56,25 @@ public final class Field {
         return this.field[x][y];
     }
 
+    public void clearCell(int number) {
+        int[] coordinate = coordinates.get(number);
+        int x = coordinate[0];
+        int y = coordinate[1];
+        this.freeCoordinates.add(number);
+        this.freeCellsCount++;
+        this.field[x][y] = Symbol.N;
+    }
+
     public int getSize() {
         return this.size;
     }
 
     public int getFreeCellsCount() {
         return this.freeCellsCount;
+    }
+
+    public Collection<Integer> getFreeCoordinates() {
+        return new HashSet<>(freeCoordinates);
     }
 
     public boolean isWinnerExists() {
